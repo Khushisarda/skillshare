@@ -1,0 +1,15 @@
+{% extends "academics/base.html" %}
+
+{% block title %}Notes{% endblock %}
+
+{% block content %}
+<h2>Notes</h2>
+<p>Here are your available notes:</p>
+<ul>
+    {% for note in notes %}
+        <li><a href="{% url 'academics:resource_detail' note.id %}">{{ note.title }}</a></li>
+    {% empty %}
+        <p>No notes available.</p>
+    {% endfor %}
+</ul>
+{% endblock %}
