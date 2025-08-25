@@ -1,0 +1,25 @@
+<h2>My Profile</h2>
+
+<!-- Show current info -->
+<img src="{{ profile.profile_pic.url }}" alt="Profile Picture" width="150">
+<p><b>Username:</b> {{ request.user.username }}</p>
+<p><b>Bio:</b> {{ profile.bio|default:"No bio yet" }}</p>
+<p><b>Skills:</b> 
+  {% for skill in profile.skills.all %}
+    {{ skill.name }}{% if not forloop.last %}, {% endif %}
+  {% empty %}
+    No skills added yet.
+  {% endfor %}
+</p>
+
+<hr>
+
+<!-- Form to edit profile -->
+<h3>Edit Profile</h3>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save Changes</button>
+</form>
+
+<a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>

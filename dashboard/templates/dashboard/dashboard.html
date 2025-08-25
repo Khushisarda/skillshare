@@ -1,0 +1,81 @@
+<h1>Dashboard</h1>
+
+<!-- Navigation -->
+<nav>
+  <a href="{% url 'feed' %}">Feed</a> |
+  <a href="{% url 'search' %}?q=">Search</a> |
+  <a href="{% url 'settings_page' %}">Settings</a> |
+  <a href="{% url 'logout' %}">Logout</a>
+</nav>
+
+<hr>
+
+<h2>Welcome, {{ request.user.username }}</h2>
+
+<h3>Your Profile</h3>
+<p>{{ profile.bio }}</p>
+{% if profile.profile_pic %}
+    <img src="{{ profile.profile_pic.url }}" width="100">
+{% endif %}
+<a href="{% url 'edit_profile' %}">Edit Profile</a>
+
+<hr>
+
+<h3>Your Skills</h3>
+<ul>
+    {% for skill in skills %}
+        <li>{{ skill.title }} - {{ skill.description }}</li>
+    {% empty %}
+        <li>No skills yet.</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h3>Your Projects</h3>
+<a href="{% url 'add_project' %}">Add Project</a>
+<ul>
+    {% for project in projects %}
+        <li>{{ project.title }} - {{ project.description }} 
+            {% if project.link %}
+                <a href="{{ project.link }}" target="_blank">View</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No projects yet.</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h3>Connections</h3>
+<h4>Following</h4>
+<ul>
+    {% for user in following %}
+        <li>{{ user.username }}</li>
+    {% empty %}
+        <li>You are not following anyone yet.</li>
+    {% endfor %}
+</ul>
+
+<h4>Followers</h4>
+<ul>
+    {% for user in followers %}
+        <li>{{ user.username }}</li>
+    {% empty %}
+        <li>No one is following you yet.</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h3>Notifications</h3>
+<ul>
+    {% for notif in notifications %}
+        <li>{{ notif.message }} 
+            <a href="{% url 'mark_notification_read' notif.id %}">Mark as read</a>
+        </li>
+    {% empty %}
+        <li>No new notifications.</li>
+    {% endfor %}
+</ul>
