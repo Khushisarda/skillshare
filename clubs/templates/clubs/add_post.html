@@ -1,0 +1,11 @@
+{% extends "clubs/base.html" %}
+{% block title %}Add Post — {{ club.name }}{% endblock %}
+{% block content %}
+  <h1>Add Post to {{ club.name }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create</button>
+    <a href="{{ club.get_absolute_url }}">Cancel</a>
+  </form>
+{% endblock %}
