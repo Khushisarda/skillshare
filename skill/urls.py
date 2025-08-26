@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('dashboard.urls')),  # example
     path('academics/', include('academics.urls', namespace='academics')),
+    path('clubs/', include('clubs.urls', namespace='clubs')),
 ]
 
 # ✅ This makes media files  (profile pics) & academic files work in development
