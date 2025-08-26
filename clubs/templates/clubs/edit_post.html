@@ -1,0 +1,11 @@
+{% extends "clubs/base.html" %}
+{% block title %}Edit Post — {{ club.name }}{% endblock %}
+{% block content %}
+  <h1>Edit Post in {{ club.name }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{{ club.get_absolute_url }}">Cancel</a>
+  </form>
+{% endblock %}

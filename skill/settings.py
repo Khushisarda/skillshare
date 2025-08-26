@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'dashboard',
     'rest_framework.authtoken',
     'academics',
+    'clubs',
 ]
 
 MIDDLEWARE = [
