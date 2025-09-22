@@ -26,7 +26,7 @@ def add_post(request, slug):
         return redirect(club.get_absolute_url())
 
     if request.method == "POST":
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, club=club, user=request.user)
         if form.is_valid():
             post = form.save(commit=False)
             post.club = club
@@ -35,7 +35,7 @@ def add_post(request, slug):
             messages.success(request, "Post created.")
             return redirect(club.get_absolute_url())
     else:
-        form = PostForm()
+        form = PostForm(club=club, user=request.user)
 
     return render(request, "clubs/add_post.html", {"club": club, "form": form})
 
@@ -48,13 +48,13 @@ def edit_post(request, slug, pk):
         return redirect(club.get_absolute_url())
 
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, instance=post, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Post updated.")
             return redirect(club.get_absolute_url())
     else:
-        form = PostForm(instance=post)
+        form = PostForm(instance=post, user=request.user)
 
     return render(request, "clubs/edit_post.html", {"club": club, "form": form, "post": post})
 
