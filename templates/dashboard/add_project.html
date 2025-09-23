@@ -1,0 +1,8 @@
+<h2>Add Project</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="title" placeholder="Project Title"><br>
+    <textarea name="description" placeholder="Project Description"></textarea><br>
+    <input type="url" name="link" placeholder="Project Link (optional)"><br>
+    <button type="submit">Add</button>
+</form>
