@@ -22,6 +22,7 @@
 <hr>
 
 <h3>Your Skills</h3>
+<a href="{% url 'add_skill' %}">add Skill</a>
 <ul>
     {% for skill in skills %}
         <li>{{ skill.title }} - {{ skill.description }}</li>
