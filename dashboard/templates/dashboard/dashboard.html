@@ -22,6 +22,7 @@
 <hr>
 
 <h3>Your Skills</h3>
+<a href="{% url 'add_skill' %}">Add Skill</a>
 <ul>
     {% for skill in skills %}
         <li>{{ skill.title }} - {{ skill.description }}</li>
@@ -79,3 +80,4 @@
         <li>No new notifications.</li>
     {% endfor %}
 </ul>
+

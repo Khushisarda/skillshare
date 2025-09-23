@@ -9,6 +9,7 @@ urlpatterns = [
     path("profile/", views.profile_view, name="profile"),
     path("edit-profile/", views.edit_profile, name="edit_profile"),
     path("add-project/", views.add_project, name="add_project"),
+    path("add_skill/",views.add_skill,name="add_skill"),
     path("send-message/<int:user_id>/", views.send_message, name="send_message"),
     path("mark-read/<int:notif_id>/", views.mark_notification_read, name="mark_notification_read"),
     path("dashboard/", views.dashboard, name="dashboard"),

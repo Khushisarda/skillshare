@@ -8,7 +8,7 @@ from .forms import UserProfileForm
 from .models import UserProfile
 from .models import SkillPost
 from .models import Project
-from .models import Notification,Connection, Endorsement,Message
+from .models import Notification,Connection, Endorsement,Message, Skill
 
 
 def home(request):
@@ -102,6 +102,15 @@ def add_project(request):
         Notification.objects.create(user=request.user, message="New project added!")
         return redirect("dashboard")
     return render(request, "dashboard/add_project.html")
+
+@login_required
+def add_skill(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        Skill.objects.create(user=request.user,name=name)
+        Notification.objects.create(user=request.user,message="new skill added!")
+        return redirect("dashboard")
+    return render(request, "dashboard/add_skill.html")
 
 
 @login_required
