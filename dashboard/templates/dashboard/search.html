@@ -1,15 +1,42 @@
-<h2>Search Results for "{{ query }}"</h2>
+<h2>Search results for "{{ query }}"</h2>
 
-<h3>Users</h3>
-{% for u in users %}
-  <p>{{ u.username }} <a href="{% url 'follow_user' u.id %}">Follow</a></p>
-{% empty %}
-  <p>No users found.</p>
-{% endfor %}
+{% if not query %}
+  <p>Please type something to search.</p>
+{% else %}
 
-<h3>Skills</h3>
-{% for s in skills %}
-  <p>{{ s.title }} by {{ s.user.username }} <a href="{% url 'endorse_skill' s.id %}">Endorse</a></p>
-{% empty %}
-  <p>No skills found.</p>
-{% endfor %}
+  <h3>People</h3>
+  {% for person in people %}
+    <p>{{ person.user.username }}</p>
+  {% empty %}
+    <p>No people found.</p>
+  {% endfor %}
+
+  <h3>Skills</h3>
+  {% for skill in skills %}
+    <p>{{ skill.name }}</p>
+  {% empty %}
+    <p>No skills found.</p>
+  {% endfor %}
+
+  <h3>Events</h3>
+  {% for event in events %}
+    <p>{{ event.title }}</p>
+  {% empty %}
+    <p>No events found.</p>
+  {% endfor %}
+
+  <h3>Academics</h3>
+  {% for aca in academics %}
+    <p>{{ aca.code }} - {{ aca.title }}</p>
+  {% empty %}
+    <p>No academics found.</p>
+  {% endfor %}
+
+  <h3>Posts</h3>
+  {% for post in posts %}
+    <p>{{ post.content }}</p>
+  {% empty %}
+    <p>No posts found.</p>
+  {% endfor %}
+
+{% endif %}
