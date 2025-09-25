@@ -9,14 +9,56 @@ class Profile(models.Model):
     year = models.CharField(max_length=10)
     college = models.CharField(max_length=200)
 
-    def _str_(self):
+    def __str__(self):
         return self.user.username
 
 class Skill(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.name
+    
+
+class Person(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+class Club(models.Model):
+    name = models.CharField(max_length=150)
+    description = models.TextField(blank=True,null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=150)
+    description = models.TextField(blank=True,null = True)
+    date = models.DateField()
+    club = models.ForeignKey(Club,on_delete=models.CASCADE,related_name="events",blank=True,null=True)
+
+    def __str__(self):
+        return self.title
+
+class Academic(models.Model):
+    title = models.CharField(max_length=200)  
+    code = models.CharField(max_length=50, unique=True)  
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.code} - {self.title}"
+
+class Post(models.Model):
+    author = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="posts")
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Post by {self.author.user.username} on {self.created_at.date()}"
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="userprofile")

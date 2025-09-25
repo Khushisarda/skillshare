@@ -9,6 +9,32 @@ from .models import UserProfile
 from .models import SkillPost
 from .models import Project
 from .models import Notification,Connection, Endorsement,Message, Skill
+from django.db.models import Q
+from .models import Person, Skill, Club,Event,Academic,Post
+
+def search(request):
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return render(request, "search/results.html", {"query": query})
+
+    people = Person.objects.filter(Q(name__icontains=query) | Q(username__icontains=query))[:20]
+    skills = Skill.objects.filter(name__icontains=query)[:20]
+    clubs = Club.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))[:20]
+    events = Event.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))[:20]
+    academics = Academic.objects.filter(Q(title__icontains=query) | Q(code__icontains=query))[:20]
+    posts = Post.objects.filter(content__icontains=query)[:20]
+
+    return render(request, "search/results.html", {
+        "query": query,
+        "people": people,
+        "skills": skills,
+        "clubs": clubs,
+        "events": events,
+        "academics": academics,
+        "posts": posts,
+    })
+
 
 
 def home(request):

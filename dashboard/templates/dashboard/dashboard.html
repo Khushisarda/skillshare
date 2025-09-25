@@ -3,7 +3,18 @@
 <!-- Navigation -->
 <nav>
   <a href="{% url 'feed' %}">Feed</a> |
-  <a href="{% url 'search' %}?q=">Search</a> |
+
+  <!-- Search bar inside navbar -->
+  <form method="get" action="{% url 'search' %}" style="display:inline;">
+      <input 
+          type="text" 
+          name="q" 
+          value="{{ request.GET.q|default:'' }}" 
+          placeholder="Search people, skills, clubs, events..."
+      >
+      <button type="submit">Search</button>
+  </form> |
+
   <a href="{% url 'settings_page' %}">Settings</a> |
   <a href="{% url 'logout' %}">Logout</a>
 </nav>
