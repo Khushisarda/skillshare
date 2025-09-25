@@ -1,0 +1,6 @@
+<h2>Feed</h2>
+{% for post in posts %}
+  <p><b>{{ post.user.username }}</b>: {{ post.title }} - {{ post.description }}</p>
+{% empty %}
+  <p>No posts from people you follow.</p>
+{% endfor %}

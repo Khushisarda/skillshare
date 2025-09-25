@@ -36,6 +36,10 @@ def search(request):
     })
 
 
+
+def home(request):
+    return render(request, 'dashboard/index.html')
+
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -60,7 +64,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect("profile")
+            return redirect("dashboard")
     else:
         form = LoginForm()
     return render(request, "dashboard/login.html", {"form": form})

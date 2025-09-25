@@ -1,0 +1,15 @@
+{% extends "clubs/base.html" %}
+{% block title %}Clubs{% endblock %}
+{% block content %}
+  <h1>All Clubs</h1>
+  <ul>
+    {% for club in clubs %}
+      <li>
+        <a href="{{ club.get_absolute_url }}">{{ club.name }}</a>
+        {% if club.coordinator %} — Coordinator: {{ club.coordinator.username }}{% endif %}
+      </li>
+    {% empty %}
+      <li>No clubs yet.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

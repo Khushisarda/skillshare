@@ -1,0 +1,41 @@
+{% extends "academics/base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+  <h2>{{ page_title }}</h2>
+
+  {% if resources %}
+    <ul>
+      {% for resource in resources %}
+        <li>
+          {% if resource.file %}
+            <a href="{{ resource.file.url }}" target="_blank">
+              {{ resource.title }} - {{ resource.subject_name }}
+            </a>
+          {% elif resource.external_link %}
+            <a href="{{ resource.external_link }}" target="_blank">
+              {{ resource.title }} - {{ resource.subject_name }}
+            </a>
+          {% else %}
+            {{ resource.title }} - {{ resource.subject_name }}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <div>
+      {% if resources.has_previous %}
+        <a href="?page={{ resources.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      Page {{ resources.number }} of {{ resources.paginator.num_pages }}
+
+      {% if resources.has_next %}
+        <a href="?page={{ resources.next_page_number }}">Next</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>No resources available.</p>
+  {% endif %}
+{% endblock %}
