@@ -11,6 +11,7 @@ from .models import Project
 from .models import Notification,Connection, Endorsement,Message, Skill
 from django.db.models import Q
 from .models import Person, Skill, Club,Event,Academic,Post
+from django.http import JsonResponse
 
 def search(request):
     query = request.GET.get("q", "").strip()
@@ -120,6 +121,7 @@ def edit_profile(request):
 
 @login_required
 def add_project(request):
+    """used to add new project in user dashboard"""
     if request.method == "POST":
         title = request.POST.get("title")
         description = request.POST.get("description")
@@ -137,7 +139,7 @@ def add_skill(request):
         Notification.objects.create(user=request.user,message="new skill added!")
         return redirect("dashboard")
     return render(request, "dashboard/add_skill.html")
-
+    
 
 @login_required
 def send_message(request, user_id):
@@ -149,13 +151,40 @@ def send_message(request, user_id):
         return redirect("dashboard")
     return render(request, "dashboard/send_message.html", {"receiver": receiver})
 
+@login_required
+def notifications_page(request):
+    return render(request, "dashboard/notifications.html")
+
+
+@login_required
+def notifications_api(request):
+    notifications = Notification.objects.filter(user=request.user)
+    data = [
+        {
+            'id' : n.id,
+            'message': n.message,
+            'read': n.read,
+            'timestamp': n.created_at.isoformat()
+        } for n in notifications
+    ]
+    return JsonResponse(data, safe=False)
 
 @login_required
 def mark_notification_read(request, notif_id):
-    notif = Notification.objects.get(id=notif_id, user=request.user)
-    notif.is_read = True
-    notif.save()
-    return redirect("dashboard")
+
+    # Mark notification as read
+    try:
+        n = Notification.objects.get(id=notif_id, user=request.user)
+        n.read = True
+        n.save()
+        return JsonResponse({'status': 'success'})
+    except Notification.DoesNotExist:
+        return JsonResponse({'status': 'error'}, status=404)
+@login_required
+def dashboard_home(request):
+    unread_count = Notification.objects.filter(user=request.user, read=False).count()
+    return render(request, "dashboard/home.html", {"unread_count": unread_count})
+        
 
 @login_required
 def follow_user(request, user_id):
