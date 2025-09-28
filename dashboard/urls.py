@@ -27,4 +27,6 @@ urlpatterns = [
     path("endorse/<int:skill_id>/", views.endorse_skill, name="endorse_skill"),
     # settings
     path("settings/", views.settings_page, name="settings_page"),
+    path("notifications/", views.notifications_page, name="notifications_page"),
+    path("notifications/api/", views.notifications_api, name="notifications_api"),
 ]
