@@ -103,7 +103,8 @@ class Notification(models.Model):
     message = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
-
+    class Meta:
+        ordering = ['-created_at']
     def _str_(self):
         return f"{self.user} - {self.message}"
 
