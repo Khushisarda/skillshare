@@ -92,3 +92,10 @@
     {% endfor %}
 </ul>
 
+<!-- Notification button at top left -->
+<a href="{% url 'notifications_page' %}" class="btn btn-sm btn-primary" style="position:absolute; left:20px; top:20px;">
+    🔔 Notifications
+</a>
+<a href="{% url 'notifications_page' %}" class="btn btn-sm btn-primary">
+    🔔 Notifications ({{ unread_count }})
+</a>

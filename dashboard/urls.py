@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
 
-    path("search/", views.search, name="search"),
+    path("search/", views.search_users, name="search"),
     path('', views.home, name='home'),
     path("register/", views.register_view, name="register"),
     path("login/", views.login_view, name="login"),
@@ -27,4 +27,6 @@ urlpatterns = [
     path("endorse/<int:skill_id>/", views.endorse_skill, name="endorse_skill"),
     # settings
     path("settings/", views.settings_page, name="settings_page"),
+    path("notifications/", views.notifications_page, name="notifications_page"),
+    path("notifications/api/", views.notifications_api, name="notifications_api"),
 ]

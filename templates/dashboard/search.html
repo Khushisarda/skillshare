@@ -1,15 +1,86 @@
 <h2>Search Results for "{{ query }}"</h2>
 
+<!-- Users Section -->
 <h3>Users</h3>
-{% for u in users %}
-  <p>{{ u.username }} <a href="{% url 'follow_user' u.id %}">Follow</a></p>
-{% empty %}
+{% if users %}
+  {% for u in users %}
+    <p>
+      <strong>{{ u.user.username }}</strong> – {{ u.year }} Year<br>
+      Skills: 
+      {% for skill in u.skills.all %}
+        {{ skill.name }}{% if not forloop.last %}, {% endif %}
+      {% empty %}
+        None
+      {% endfor %}
+      <br>
+      <a href="{% url 'follow_user' u.id %}">Follow</a>
+    </p>
+  {% endfor %}
+{% else %}
   <p>No users found.</p>
-{% endfor %}
+{% endif %}
 
+<!-- Skills Section -->
 <h3>Skills</h3>
-{% for s in skills %}
-  <p>{{ s.title }} by {{ s.user.username }} <a href="{% url 'endorse_skill' s.id %}">Endorse</a></p>
-{% empty %}
+{% if skills %}
+  {% for s in skills %}
+    <p>
+      {{ s.name }} by {{ s.user.username }}
+      <a href="{% url 'endorse_skill' s.id %}">Endorse</a>
+    </p>
+  {% endfor %}
+{% else %}
   <p>No skills found.</p>
-{% endfor %}
+{% endif %}
+
+<!-- Clubs Section -->
+<h3>Clubs</h3>
+{% if clubs %}
+  {% for c in clubs %}
+    <p>
+      {{ c.name }} – {{ c.description }}
+      <a href="{% url 'join_club' c.id %}">Join</a>
+    </p>
+  {% endfor %}
+{% else %}
+  <p>No clubs found.</p>
+{% endif %}
+
+<!-- Academics Section -->
+<h3>Academics</h3>
+{% if academics %}
+  {% for a in academics %}
+    <p>
+      {{ a.title }} ({{ a.code }})
+      <a href="{% url 'view_academic' a.id %}">View</a>
+    </p>
+  {% endfor %}
+{% else %}
+  <p>No academics found.</p>
+{% endif %}
+
+<!-- Events Section -->
+<h3>Events</h3>
+{% if events %}
+  {% for e in events %}
+    <p>
+      {{ e.title }} – {{ e.description }}
+      <a href="{% url 'view_event' e.id %}">View</a>
+    </p>
+  {% endfor %}
+{% else %}
+  <p>No events found.</p>
+{% endif %}
+
+<!-- Posts Section -->
+<h3>Posts</h3>
+{% if posts %}
+  {% for p in posts %}
+    <p>
+      {{ p.content }}
+      <a href="{% url 'view_post' p.id %}">View</a>
+    </p>
+  {% endfor %}
+{% else %}
+  <p>No posts found.</p>
+{% endif %}

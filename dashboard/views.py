@@ -11,30 +11,75 @@ from .models import Project
 from .models import Notification,Connection, Endorsement,Message, Skill
 from django.db.models import Q
 from .models import Person, Skill, Club,Event,Academic,Post
+from django.http import JsonResponse
 
-def search(request):
-    query = request.GET.get("q", "").strip()
+def search_users(request):
+    query = request.GET.get('q', '').strip()
+    year = request.GET.get('year', '')
+    skill_filter = request.GET.get('skill', '')
+    club_filter = request.GET.get('club', '')
+    academic_filter = request.GET.get('academic', '')
 
-    if not query:
-        return render(request, "search/results.html", {"query": query})
+    # --- Users ---
+    users = Profile.objects.all()
+    if query:
+        users = users.filter(
+            Q(user__username__icontains=query) | 
+            Q(user__first_name__icontains=query) | 
+            Q(user__last_name__icontains=query) | 
+            Q(skills__name__icontains=query)
+        )
+    if year:
+        users = users.filter(year=year)
+    if skill_filter:
+        users = users.filter(skills__name=skill_filter)
+    
+    # --- Skills ---
+    skills = Skill.objects.all()
+    if query:
+        skills = skills.filter(name__icontains=query)
+    
+    # --- Clubs ---
+    clubs = Club.objects.all()
+    if query:
+        clubs = clubs.filter(Q(name__icontains=query) | Q(description__icontains=query))
+    if club_filter:
+        clubs = clubs.filter(name__icontains=club_filter)
+    
+    # --- Academics ---
+    academics = Academic.objects.all()
+    if query:
+        academics = academics.filter(Q(title__icontains=query) | Q(code__icontains=query))
+    if academic_filter:
+        academics = academics.filter(title__icontains=academic_filter)
+    
+    # --- Events ---
+    events = Event.objects.all()
+    if query:
+        events = events.filter(Q(title__icontains=query) | Q(description__icontains=query))
+    
+    # --- Posts ---
+    posts = Post.objects.all()
+    if query:
+        posts = posts.filter(content__icontains=query)
+    
+    # --- All Skills for dropdown ---
+    all_skills = Skill.objects.all()
 
-    people = Person.objects.filter(Q(name__icontains=query) | Q(username__icontains=query))[:20]
-    skills = Skill.objects.filter(name__icontains=query)[:20]
-    clubs = Club.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))[:20]
-    events = Event.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))[:20]
-    academics = Academic.objects.filter(Q(title__icontains=query) | Q(code__icontains=query))[:20]
-    posts = Post.objects.filter(content__icontains=query)[:20]
-
-    return render(request, "search/results.html", {
-        "query": query,
-        "people": people,
-        "skills": skills,
-        "clubs": clubs,
-        "events": events,
-        "academics": academics,
-        "posts": posts,
+    return render(request, 'search_results.html', {
+        'users': users.distinct(),
+        'skills': skills.distinct(),
+        'clubs': clubs.distinct(),
+        'academics': academics.distinct(),
+        'events': events.distinct(),
+        'posts': posts.distinct(),
+        'all_skills': all_skills,
+        'query': query,
+        'selected_year': year,
+        'selected_skill': skill_filter,
+        'selected_club': club_filter,
+        'selected_academic': academic_filter,
     })
-
 
 
 def home(request):
@@ -120,6 +165,7 @@ def edit_profile(request):
 
 @login_required
 def add_project(request):
+    """used to add new project in user dashboard"""
     if request.method == "POST":
         title = request.POST.get("title")
         description = request.POST.get("description")
@@ -137,7 +183,7 @@ def add_skill(request):
         Notification.objects.create(user=request.user,message="new skill added!")
         return redirect("dashboard")
     return render(request, "dashboard/add_skill.html")
-
+    
 
 @login_required
 def send_message(request, user_id):
@@ -149,13 +195,40 @@ def send_message(request, user_id):
         return redirect("dashboard")
     return render(request, "dashboard/send_message.html", {"receiver": receiver})
 
+@login_required
+def notifications_page(request):
+    return render(request, "dashboard/notifications.html")
+
+
+@login_required
+def notifications_api(request):
+    notifications = Notification.objects.filter(user=request.user)
+    data = [
+        {
+            'id' : n.id,
+            'message': n.message,
+            'read': n.read,
+            'timestamp': n.created_at.isoformat()
+        } for n in notifications
+    ]
+    return JsonResponse(data, safe=False)
 
 @login_required
 def mark_notification_read(request, notif_id):
-    notif = Notification.objects.get(id=notif_id, user=request.user)
-    notif.is_read = True
-    notif.save()
-    return redirect("dashboard")
+
+    # Mark notification as read
+    try:
+        n = Notification.objects.get(id=notif_id, user=request.user)
+        n.read = True
+        n.save()
+        return JsonResponse({'status': 'success'})
+    except Notification.DoesNotExist:
+        return JsonResponse({'status': 'error'}, status=404)
+@login_required
+def dashboard_home(request):
+    unread_count = Notification.objects.filter(user=request.user, read=False).count()
+    return render(request, "dashboard/home.html", {"unread_count": unread_count})
+        
 
 @login_required
 def follow_user(request, user_id):
