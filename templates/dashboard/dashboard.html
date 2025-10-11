@@ -2,11 +2,37 @@
 
 <!-- Navigation -->
 <nav>
-  <a href="{% url 'feed' %}">Feed</a> |
-  <a href="{% url 'search' %}?q=">Search</a> |
-  <a href="{% url 'settings_page' %}">Settings</a> |
+  <a href="{% url 'feed' %}">Feed</a> | 
+  <a href="{% url 'search' %}?q=">Search</a> | 
+  <a href="{% url 'settings_page' %}">Settings</a> | 
   <a href="{% url 'logout' %}">Logout</a>
 </nav>
+
+<form method="GET" action="{% url 'search' %}" style="margin-top: 10px;">
+  <!-- Search input -->
+  <input type="text" name="q" placeholder="Search by name or skill..." value="{{ request.GET.q }}" />
+
+  <!-- Year dropdown -->
+  <select name="year">
+    <option value="">All Years</option>
+    <option value="1" {% if request.GET.year == "1" %}selected{% endif %}>1st Year</option>
+    <option value="2" {% if request.GET.year == "2" %}selected{% endif %}>2nd Year</option>
+    <option value="3" {% if request.GET.year == "3" %}selected{% endif %}>3rd Year</option>
+    <option value="4" {% if request.GET.year == "4" %}selected{% endif %}>4th Year</option>
+  </select>
+
+  <!-- Skill dropdown -->
+  <select name="skill">
+    <option value="">All Skills</option>
+    {% for skill in all_skills %}
+      <option value="{{ skill.name }}" {% if request.GET.skill == skill.name %}selected{% endif %}>{{ skill.name }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- Submit button -->
+  <button type="submit">Search</button>
+</form>
+
 
 <hr>
 
