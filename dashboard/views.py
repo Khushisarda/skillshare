@@ -149,6 +149,15 @@ def dashboard(request):
         "notifications": notifications,
     })
 
+@login_required
+def add_skill_ajax(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if name:
+            skill = SkillPost.objects.create(user=request.user, name=name)
+            Notification.objects.create(user=request.user, message="New skill added!")
+            return JsonResponse({"success": True, "skill": skill.name})
+    return JsonResponse({"success": False})
 
 @login_required
 def edit_profile(request):
@@ -174,15 +183,20 @@ def add_project(request):
         Notification.objects.create(user=request.user, message="New project added!")
         return redirect("dashboard")
     return render(request, "dashboard/add_project.html")
-
 @login_required
 def add_skill(request):
     if request.method == "POST":
         name = request.POST.get("name")
-        Skill.objects.create(user=request.user,name=name)
-        Notification.objects.create(user=request.user,message="new skill added!")
-        return redirect("dashboard")
-    return render(request, "dashboard/add_skill.html")
+        if name:
+            skill = Skill.objects.create(name=name)
+            Notification.objects.create(user=request.user, message="New skill added!")
+            return JsonResponse({"success": True, "skill": skill.name})
+        return JsonResponse({"success": False, "error": "No skill name provided"})
+
+    # GET request: get all skills
+    skills = Skill.objects.all()
+    return render(request, "dashboard/add_skill.html", {"skills": skills})
+
     
 
 @login_required

@@ -9,10 +9,8 @@
 </nav>
 
 <form method="GET" action="{% url 'search' %}" style="margin-top: 10px;">
-  <!-- Search input -->
   <input type="text" name="q" placeholder="Search by name or skill..." value="{{ request.GET.q }}" />
 
-  <!-- Year dropdown -->
   <select name="year">
     <option value="">All Years</option>
     <option value="1" {% if request.GET.year == "1" %}selected{% endif %}>1st Year</option>
@@ -21,7 +19,6 @@
     <option value="4" {% if request.GET.year == "4" %}selected{% endif %}>4th Year</option>
   </select>
 
-  <!-- Skill dropdown -->
   <select name="skill">
     <option value="">All Skills</option>
     {% for skill in all_skills %}
@@ -29,10 +26,8 @@
     {% endfor %}
   </select>
 
-  <!-- Submit button -->
   <button type="submit">Search</button>
 </form>
-
 
 <hr>
 
@@ -48,14 +43,63 @@
 <hr>
 
 <h3>Your Skills</h3>
-<a href="{% url 'add_skill' %}">Add Skill</a>
-<ul>
+
+<!-- Inline Add Skill -->
+<button type="button" id="add-skill-btn">Add Skill</button>
+
+<div id="skill-form-container" style="display: none; margin-top: 10px;">
+    <form id="skill-form">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Skill name" required><br>
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+<ul id="skill-list">
     {% for skill in skills %}
-        <li>{{ skill.title }} - {{ skill.description }}</li>
+        <li>{{ skill.name }}</li>
     {% empty %}
         <li>No skills yet.</li>
     {% endfor %}
 </ul>
+
+<script>
+const btn = document.getElementById('add-skill-btn');
+const formContainer = document.getElementById('skill-form-container');
+const skillForm = document.getElementById('skill-form');
+const skillList = document.getElementById('skill-list');
+
+// Toggle Add Skill form
+btn.addEventListener('click', () => {
+    formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+});
+
+// AJAX submission
+skillForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch("{% url 'add_skill_ajax' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": formData.get('csrfmiddlewaretoken')
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            skillForm.reset();
+            const li = document.createElement('li');
+            li.textContent = data.skill;
+            skillList.appendChild(li);
+        } else {
+            alert('Error adding skill');
+        }
+    })
+    .catch(err => console.log(err));
+});
+</script>
 
 <hr>
 
@@ -106,4 +150,3 @@
         <li>No new notifications.</li>
     {% endfor %}
 </ul>
-
